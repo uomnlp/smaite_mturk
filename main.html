@@ -1,0 +1,50 @@
+<script src="https://assets.crowd.aws/crowd-html-elements.js"></script>
+        <crowd-entity-annotation name="crowd-entity-annotation" header='${title}' labels="[{'label': 'Evidence', 'shortDisplayName': 'EVI', 'fullDisplayName': 'Evidence'}]" text='${evidence_text}'>
+            <full-instructions header="Fact-checking instructions">
+                <ol>
+                    <li><strong>Read</strong> the text carefully.</li>
+                    <li><strong>Highlight</strong> words, phrases, or sections of the text.</li>
+                    <li><strong>Choose</strong> the label that best matches what you have highlighted.</li>
+                    <li>To <strong>change</strong> a label, choose highlighted text and select a new label.</li>
+                    <li>To <strong>remove</strong> a label from highlighted text, choose the X next to the abbreviated label name on the highlighted text.</li>
+                    <li>You can select all of a previously highlighted text, but not a portion of it.</li>
+                </ol>
+            </full-instructions>
+            <short-instructions>
+                Apply labels to words or phrases.
+            </short-instructions>
+            <div id="additionalQuestions" style="margin-top: 20px">
+                <h3>
+                    What is the overall subject of this text?
+                </h3>
+                <crowd-radio-group>
+                    <crowd-radio-button name="tech" value="tech">Technology</crowd-radio-button>
+                    <crowd-radio-button name="politics" value="politics">Politics</crowd-radio-button>
+                </crowd-radio-group>
+            </div>
+        </crowd-entity-annotation>
+        <crowd-form style="display: none;"><crowd-form>
+<script>
+document.addEventListener('all-crowd-elements-ready', () => {
+    
+    document
+        .querySelector('crowd-entity-annotation')
+        .shadowRoot
+        .querySelector('crowd-form')
+        .form
+        .appendChild(additionalQuestions);
+    document
+        .querySelector('crowd-entity-annotation')
+        .shadowRoot
+        .querySelector('crowd-form')
+        .form
+        .setAttribute('style','float: right; width: 45%');
+    document
+        .querySelector('crowd-entity-annotation')
+        .shadowRoot
+        .querySelector('crowd-form').form.insertAdjacentHTML('beforebegin', '<div id="inline_article" style="float: left; width: 45%; height: 100%; position: relative;"><h2>Claim: <p>'+'${claim}'+'</p></h2><h2>Verdict:'+'${verdict}'+'</h2><div id="articleQuestions" style="position: absolute; bottom: 0;"><h3>How do you think about the verdict?</h3><crowd-radio-group><crowd-radio-button name="ture" value="ture">True</crowd-radio-button><crowd-radio-button name="false" value="false">False</crowd-radio-button></crowd-radio-group></div></div>');
+
+});
+
+
+</script>
