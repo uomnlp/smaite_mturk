@@ -1,0 +1,92 @@
+<script src="https://assets.crowd.aws/crowd-html-elements.js"></script>
+<crowd-entity-annotation name="crowd-entity-annotation" header='Title: Waitrose is not offering anyone who shares a Facebook post free food - Full Fact' labels="[{'label': 'Evidence', 'shortDisplayName': 'EVI', 'fullDisplayName': 'Evidence'}]" text='A post on Facebook with over 2,500 shares, promises to send a box full of food that is about to expire and worth over £50 to anyone who shares and comments.
+Although the page is called ‘Waitrose Food’, it is not affiliated with Waitrose. Waitrose told Full Fact: “This is a hoax and we advise people to ignore this post and not to click on any links, or enter any personal information.”
+There are a number of clues that this post isn’t genuine. The page isn’t verified, only has 780 likes and if you look under “Page Transparency”, you can see it was only created on 16 March 2022. The about section says it’s “for fans of Waitrose and good quality food” and its handle is “@FoodWaitroseFans”.
+The real Waitrose Facebook page has a blue tick, meaning it’s been verified by Facebook, and over 500,000 likes. Its handle is simply “@waitrose”. 
+The first picture accompanying the post also looks suspicious. It shows groceries surrounded by brown boxes that have “Waitrose” written on them, but the text appears to have been Photoshopped, and the food itself doesn’t carry the Waitrose branding. If you do a reverse image search of the picture, you can see the original version shows boxes of food from Morrisons. Two of the other pictures are from a 2020 article about a woman explaining how she’d managed to do a “yellow sticker shop” at Waitrose during lockdown.
+This isn’t the first time we’ve seen unofficial Facebook pages named after supermarkets, retailers or pubs make offers like this. Sometimes they will ask people to fill in a survey which asks for personal information. None of these were affiliated with the company they claimed to be and all the competitions and offers were fake.
+Picture courtesy of Dan Marsh licensed under CC BY 2.0.'>
+    <full-instructions header="Fact-checking instructions">
+        <ol>
+            <li><strong>Read</strong> the text carefully.</li>
+            <li><strong>Highlight</strong> sections of the text that you think it can be viewed as evidence that support the claim.</li>
+            <li>To <strong>change</strong> a label, choose highlighted text and select a new label.</li>
+            <li>To <strong>remove</strong> a label from highlighted text, choose the X next to the abbreviated label name on the highlighted text.</li>
+            <li>You can select all of a previously highlighted text, but not a portion of it.</li>
+        </ol>
+    </full-instructions>
+    <short-instructions>
+        Apply labels to words or phrases.
+    </short-instructions>
+    <div id="additionalQuestions" style="margin-top: 20px">
+        <h3>
+            What is the overall subject of this text?
+        </h3>
+        <crowd-radio-group>
+            <crowd-radio-button name="tech" value="tech">Technology</crowd-radio-button>
+            <crowd-radio-button name="politics" value="politics">Politics</crowd-radio-button>
+        </crowd-radio-group>
+        <h3>Select an text type:</h3>
+        <input type="radio" id="sports" name="text-type" value="sports" required><label for="sports">Sports</label>
+        <input type="radio" id="economy" name="text-type" value="economy" required><label for="economy">Economy</label>
+    </div>
+    <div id="articleQuestions" style="position: absolute; bottom: 0;">
+        <form method action>
+            <h3>Is the explanation a good summary of the evidence?</h3>
+            <input type="radio" id="rate0" name="rate" value="0"><label for="rate0">0</label>
+            <input type="radio" id="rate1" name="rate" value="1"><label for="rate1">1</label>
+            <input type="radio" id="rate2" name="rate" value="2"><label for="rate2">2</label>
+            <input type="radio" id="rate3" name="rate" value="3"><label for="rate3">3</label>
+            <input type="radio" id="rate4" name="rate" value="4"><label for="rate4">4</label>
+            <h3>Looking at the explanation only, what is the most likely verdict?</h3>
+            <input type="radio" id="true" name="verdict" value="true"><label for="true">True</label>
+            <input type="radio" id="false" name="verdict" value="false"><label for="false">False/Misleading</label>
+            <input type="radio" id="unk" name="verdict" value="unknown"><label for="unk">Unknown</label>
+        </form>
+    </div>
+</crowd-entity-annotation>
+<crowd-form style="display: none;">
+    <crowd-form>
+        <script>
+        document.addEventListener('all-crowd-elements-ready', () => {
+            document
+                .querySelector('crowd-entity-annotation')
+                .shadowRoot
+                .querySelector('crowd-form')
+                .form
+                .setAttribute('style', 'float: right; width: 45%');
+            document
+                .querySelector('crowd-entity-annotation')
+                .shadowRoot
+                .querySelector('crowd-form footer-content label').innerHTML = 'No evidence to label';
+             document
+                 .querySelector('crowd-entity-annotation')
+                 .shadowRoot
+                 .querySelector('crowd-form').form.insertAdjacentHTML('beforebegin', '<div id="inline_article" style="float: left; width: 45%; height: 100%; position: relative;"><h2>Claim: <p>'+'Waitrose is giving away boxes of food that’s about to expire and to win you must share and comment on the post.'+'</p></h2><h2>Explanation: <p>'+'The page claiming this is not affiliated with Waitrose and there is no prize.'+'</p></h2></div>');
+             document
+                 .querySelector('crowd-entity-annotation')
+                 .shadowRoot
+                 .querySelector('crowd-form #inline_article')
+                 .appendChild(articleQuestions);
+            document
+                .querySelector('crowd-entity-annotation')
+                .shadowRoot
+                .querySelectorAll('p')
+                .forEach((item, index) => { item.setAttribute('style', 'font-size: 1em;'); });
+            document
+                .querySelector('crowd-entity-annotation')
+                .shadowRoot
+                .querySelectorAll('label')
+                .forEach((item, index) => { item.setAttribute('style', 'margin-left: 5px; margin-right: 20px;'); })
+            console.log(document
+                .querySelector('crowd-entity-annotation')
+                .shadowRoot
+                .querySelectorAll('input[type="radio"]'))
+            document
+                .querySelector('crowd-entity-annotation')
+                .shadowRoot
+                .querySelectorAll('input')
+                .forEach((item, index) => { item.required = true; })
+
+        });
+        </script>
