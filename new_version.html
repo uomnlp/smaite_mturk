@@ -1,0 +1,153 @@
+<script src="https://assets.crowd.aws/crowd-html-elements.js"></script>
+<style>
+    h3 {
+    margin-top: 0;
+  }
+  p {
+    font-weight: normal;
+  }
+  crowd-card {
+    width: 100%;
+  }
+  .panel-left {
+    float: left; 
+    width: 45%; 
+    height: 100%; 
+    position: relative;
+  }
+  .panel-right {
+    float: right; 
+    width: 45%
+  }
+  .card {
+    margin: 10px;
+  }
+  .container {
+    width: 100%;
+    margin: 20px;
+    padding-bottom: 30px;
+  }
+  .left {
+    width: 70%;
+    margin-top: 0;
+    vertical-align:top;
+    margin-right: 10px;
+    display: inline-block;
+  }
+  
+  .right {
+    width: 20%;
+    margin-top: 0;
+    vertical-align:top;
+    display: inline-block;
+  }
+
+</style>
+<crowd-form>
+    <short-instructions>
+        Your short instructions here.
+    </short-instructions>
+    <full-instructions>
+        Your full instructions here.
+    </full-instructions>
+    <div class="panel">
+        <div class="panel-left">
+            <h2>Claim: <p>${Claim}</p>
+            </h2>
+            <h2>Explanation: <p>${Explanation}</p>
+            </h2>
+        </div>
+        <div class="panel-right">
+            <div class="container">
+                <div class="left">
+                    <h3>Please read through the snippet below and select on the right side.</h3>
+                    <crowd-card>
+                        <div class="card">
+                            ${Snippet_1}
+                        </div>
+                    </crowd-card>
+                </div>
+                <div class="right">
+                    <h3>Would you think the snippet is relevant to the claim?</h3>
+                    <input type="radio" id="true_1" name="verdict_1" value="true" required><label for="true_1"><span></span>Yes</label>
+                    <p>
+                        <input type="radio" id="false_1" name="verdict_1" value="false" required><label for="false_1"><span></span>No</label>
+                        <p>
+                            <input type="radio" id="unk_1" name="verdict_1" value="ambivalent" required><label for="unk_1"><span></span>Ambivalent</label>
+                </div>
+            </div>
+            <div class="container">
+                <div class="left">
+                    <h3>Please read through the snippet below and select on the right side.</h3>
+                    <crowd-card>
+                        <div class="card">
+                            ${Snippet_2}
+                        </div>
+                    </crowd-card>
+                </div>
+                <div class="right">
+                    <h3>Would you think the snippet is relevant to the claim?</h3>
+                    <input type="radio" id="true_2" name="verdict_2" value="true" required><label for="true_2"><span></span>Yes</label>
+                    <p>
+                        <input type="radio" id="false_2" name="verdict_2" value="false" required><label for="false_2"><span></span>No</label>
+                        <p>
+                            <input type="radio" id="unk_2" name="verdict_2" value="ambivalent" required><label for="unk_2"><span></span>Ambivalent</label>
+                </div>
+            </div>
+            <div class="container">
+                <div class="left">
+                    <h3>Please read through the snippet below and select on the right side.</h3>
+                    <crowd-card>
+                        <div class="card">
+                            ${Snippet_3}
+                        </div>
+                    </crowd-card>
+                </div>
+                <div class="right">
+                    <h3>Would you think the snippet is relevant to the claim?</h3>
+                    <input type="radio" id="true_3" name="verdict_3" value="true" required><label for="true_3"><span></span>Yes</label>
+                    <p>
+                        <input type="radio" id="false_3" name="verdict_3" value="false" required><label for="false_3"><span></span>No</label>
+                        <p>
+                            <input type="radio" id="unk_3" name="verdict_3" value="ambivalent" required><label for="unk_3"><span></span>Ambivalent</label>
+                </div>
+            </div>
+            <div class="container">
+                <div class="left">
+                    <h3>Please read through the snippet below and select on the right side.</h3>
+                    <crowd-card>
+                        <div class="card">
+                            ${Snippet_4}
+                        </div>
+                    </crowd-card>
+                </div>
+                <div class="right">
+                    <h3>Would you think the snippet is relevant to the claim?</h3>
+                    <input type="radio" id="true_4" name="verdict_4" value="true" required><label for="true_4"><span></span>Yes</label>
+                    <p>
+                        <input type="radio" id="false_4" name="verdict_4" value="false" required><label for="false_4"><span></span>No</label>
+                        <p>
+                            <input type="radio" id="unk_4" name="verdict_4" value="ambivalent" required><label for="unk_4"><span></span>Ambivalent</label>
+                </div>
+            </div>
+            <div class="container">
+                <div class="left">
+                    <h3>Please read through the snippet below and select on the right side.</h3>
+                    <crowd-card>
+                        <div class="card">
+                            ${Snippet_5}
+                        </div>
+                    </crowd-card>
+                </div>
+                <div class="right">
+                    <h3>Would you think the snippet is relevant to the claim?</h3>
+                    <input type="radio" id="true_5" name="verdict_5" value="true" required><label for="true_5"><span></span>Yes</label>
+                    <p>
+                        <input type="radio" id="false_5" name="verdict_5" value="false" required><label for="false_5"><span></span>No</label>
+                        <p>
+                            <input type="radio" id="unk_5" name="verdict_5" value="ambivalent" required><label for="unk_5"><span></span>Ambivalent</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</crowd-form>
