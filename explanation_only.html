@@ -1,0 +1,253 @@
+<script src="https://assets.crowd.aws/crowd-html-elements.js" xmlns=""></script>
+
+<style>
+    h3 {
+        margin-top: 10px;
+    }
+
+    crowd-card {
+        width: 100%;
+
+    }
+
+    .container {
+        display: grid;
+        grid-template-columns: 2fr 7fr 1fr;
+    }
+
+    .container > div {
+        margin: 10px;
+    }
+
+    .column {
+        display: grid;
+        grid-template-columns: auto;
+        grid-template-rows: minmax(150px, max-content) auto;
+
+
+    .card {
+        margin: 10px;
+        white-space: pre-wrap;
+    }
+
+    .radio-box {
+        margin-bottom: 20px;
+        height: fit-content;
+        padding-bottom: 10px;
+    }
+</style>
+
+<div id="errorBox"></div>
+<crowd-form>
+    <short-instructions>
+        <p>Given the verdict and the claim, try to predict whether the claim is true, false or misleading or whether
+            it's hard to judge.</p>
+
+        <p>Once you did, read the article that the verdict summarises, and rate on a scale from 1 to 5, whether
+            the verdict is a good summary of the article.</p>
+        <p>
+            Make sure to read the full instructions!
+        </p>
+    </short-instructions>
+
+    <full-instructions>
+        <h2>Instructions</h2>
+        <p>
+            We are collecting ratings for summaries of fact verification articles to study explainable automated
+            fact verification.
+        </p>
+        <p>
+            In this task, you will be asked to judge the quality of (automatically generated) summaries of
+            fact verification articles.
+        </p>
+        <p>
+            This is a <strong>qualification task</strong>. Once you submit, and we approve your HITs, we will
+            issue you with a corresponding qualification that will allow you to participate in the main task.
+        </p>
+
+        <h3>Example</h3>
+        <table>
+            <tr>
+                <td>
+                    <u>Claim:</u> A Pfizer document contains a list of around 158,000 adverse events 'from their
+                    vaccine'.
+                </td>
+            </tr>
+            <tr>
+                <td><u>Verdict:</u> No it doesn't. The document lists a mixture of reported adverse events following
+                    vaccination. Many may not have been caused by the vaccine.
+                </td>
+            </tr>
+            <tr>
+                <td><u>Article:</u> A widely shared article on the Express website about the safety of Pfizer's Covid-19
+                    vaccine is misleading in several ways.<br/>It incorrectly claims that a recently published document
+                    about adverse events following vaccination is the first time the public have been allowed to see the
+                    clinical trial data that Pfizer submitted to the US Food and Drug Administration (FDA) for the
+                    authorisation of the vaccine. In fact, much of the data in this document does not come from Pfizer's
+                    clinical trials, and some adverse event data from the trials has been publicly available on the FDA
+                    website at least since December 2020. [...]
+                </td>
+            </tr>
+        </table>
+        <h3>Details</h3>
+        <p>You will need to <i>(a)</i> judge, whether the claim is true, based on the verdict only.</p>
+        <p>Afterwards, you will need to <i>(b)</i> assign a numeric score from 1 to 5 based on how well you think
+            the verdict summarises the full article (where 5 is the best).
+            Note that the full article appears only after you have judged the explanation.</p>
+
+
+        <p>In judging the quality,</p>
+        <ul>
+            <li>
+                please disregard your personal opinion about the claim. It does not matter whether <i>you</i> think
+                it's true, but rather what the verdict claims.
+            </li>
+            <li>
+                If the verdict provides ultimately conflicting/unclear information about the claim, select "Hard to
+                say".
+            </li>
+            <li>
+                When rating the quality of the summary, give the highest mark (5) when you <strong>cannot think of a way
+                to improve</strong> the summary. Give the lowest mark (1) if the summary is <strong>unrelated</strong>
+                to the article. For ratings in between, consider the following:
+                <ul>
+                    <li>Does the summary capture <strong>main idea</strong> of the article?</li>
+                    <li>Does the summary leave <strong>important information</strong> mentioned in the article?</li>
+                    <li>Does the summary <strong>"invent"</strong> new information, not mentioned in the article?</li>
+                </ul>
+            </li>
+        </ul>
+    </full-instructions>
+    <div class="container">
+        <div class='column' id="left">
+            <div class="radio-box" id="firstForm">
+                <h3>Looking at the verdict only, The claim is</h3>
+                <input type="radio" id="true" name="verdict" value="true"><label for="true">True</label>
+                <input type="radio" id="false" name="verdict" value="false"><label for="false">False/Misleading</label>
+                <input type="radio" id="unk" name="verdict" value="unknown"><label for="unk">Hard to say</label>
+            </div>
+            <div>
+                <h3>Claim</h3>
+                <crowd-card>
+                    <div class="card">${claim}</div>
+                </crowd-card>
+                <h3>Verdict</h3>
+                <crowd-card>
+                    <div class="card">${verdict}
+                    </div>
+                </crowd-card>
+            </div>
+            <span onclick="reset();">Reset</span>
+        </div>
+
+        <div class='column' id="right" style="display: none">
+            <div class="radio-box">
+                <h3>Is the explanation a good summary of the article?</h3>
+                <input type="radio" id="rate0" name="rate" value="1"><label for="rate0">1</label>
+                <input type="radio" id="rate1" name="rate" value="2"><label for="rate1">2</label>
+                <input type="radio" id="rate2" name="rate" value="3"><label for="rate2">3</label>
+                <input type="radio" id="rate3" name="rate" value="4"><label for="rate3">4</label>
+                <input type="radio" id="rate4" name="rate" value="5"><label for="rate4">5</label>
+
+            </div>
+            <div>
+                <h3>Article</h3>
+                <crowd-card>
+                    <div class="card">
+                        ${text}
+                    </div>
+                </crowd-card>
+            </div>
+        </div>
+    </div>
+
+
+</crowd-form>
+
+<script>
+
+
+
+
+
+
+    function reset() {
+        document
+            .querySelector('crowd-form')
+            .querySelectorAll('input[name="rate"]').forEach((e) => e.checked = false);
+        document
+            .querySelector('crowd-form')
+            .querySelectorAll('input[name="verdict"]').forEach((e) => e.checked = false);
+        right.style = 'display: none;';
+    }
+
+    function uncoverSecondPart() {
+        right.style = '';
+    }
+
+    document.addEventListener('all-crowd-elements-ready', () => {
+
+
+        firstForm.addEventListener('click', function (event) {
+            if (event.target && event.target.matches("input[type='radio']")) {
+                uncoverSecondPart();
+            }
+        });
+        document.querySelector('crowd-form').onsubmit = function (event) {
+            errorBox.innerHTML = '';
+            if (makingSureChecked() === false) {
+                console.log(event);
+                event.preventDefault();
+                console.log(errorBox);
+                errorBox.innerHTML = '<crowd-alert type="error">Please assign a rating to every item.</crowd-alert>';
+                errorBox.scrollIntoView();
+            }
+        };
+        try {
+            workerID = document.querySelector('div.container-fluid.me-bar').querySelectorAll('span')[3].textContent.replace('Copied', '');
+        } catch (error) {
+            console.log(error);
+            //workerID = "A4Q85CBUBML3J";
+        }
+        fetch('https://mturk.schlegel-online.de/?worker_id=' + workerID).then(function (response) {
+            return response.json();
+        }).then(function (data) {
+            console.log(data);
+            if (data === true) {
+                alert("You have already obtained this qualification! " +
+                    "You can work on the full task instead! " +
+                    "If you continue to work on the qualification task, " +
+                    "your responses will be discarded and you won't get paid.");
+            }
+
+        }).catch(function () {
+            console.log("Booo");
+        });
+
+        function makingSureChecked() {
+            // body...
+            var rates = document
+                .querySelector('crowd-form')
+                .querySelectorAll('input[name="rate"]');
+            var verdicts = document
+                .querySelector('crowd-form')
+                .querySelectorAll('input[name="verdict"]');
+            var rate_flag = false;
+            var verdict_flag = false;
+            for (i = 0; i < rates.length; i++) {
+                if (rates[i].checked) {
+                    rate_flag = true;
+                    break;
+                }
+            }
+            for (i = 0; i < verdicts.length; i++) {
+                if (verdicts[i].checked) {
+                    verdict_flag = true;
+                    break;
+                }
+            }
+            return rate_flag && verdict_flag;
+
+        }
+    });
+</script>
