@@ -23,7 +23,7 @@
         display: grid;
         grid-template-columns: auto;
         grid-template-rows: minmax(150px, max-content) auto;
-
+    }
 
     .card {
         margin: 10px;
@@ -90,22 +90,55 @@
             </tr>
         </table>
         <h3>Details</h3>
-        <p>You will need to <i>(a)</i> judge, whether the claim is true, based on the verdict only.</p>
+        <p>You will need to <i>(a)</i> judge, whether the claim is true, based on the verdict only. </p>
         <p>Afterwards, you will need to <i>(b)</i> assign a numeric score from 1 to 5 based on how well you think
             the verdict summarises the full article (where 5 is the best).
             Note that the full article appears only after you have judged the explanation.</p>
 
-
-        <p>In judging the quality,</p>
+        <p>In judging the (reported) truthfulness of the claim:</p>
         <ul>
             <li>
                 please disregard your personal opinion about the claim. It does not matter whether <i>you</i> think
-                it's true, but rather what the verdict claims.
+                it's true, but rather what the verdict states.
+            </li>
+            <li>
+                Select <strong>True</strong>, if the verdict states that the claim is true without any caveats.
+            </li>
+            <li>
+                Select <strong>Mostly</strong>, if the verdict states that the claim is true but there are some
+                lacking information or imprecisions.
+            </li>
+            <li>
+                Select <strong>Half/Half</strong>, if the verdict states that the claim is a mixture of correct and
+                false
+                information, for example when there are two parts to the claim but only one is correct.
+            </li>
+            <li>
+                Select <strong>Mostly False</strong>, if the verdict states that the claim is mostly false, for example
+                when it
+                is based on something that is true in principle but draws the wrong conclusions.
+            </li>
+            <li>
+                Select <strong>False</strong>, if the verdict clearly states that the claim is false, incorrect, made up
+                etc.
+            </li>
+            <li>
+                Select <strong>Misleading</strong>, if the verdict states that the claim is misleading. This is the case
+                when the claim describes something that happened in principle (e.g. someone said something) but takes it
+                out of context, exaggerates it, attributes it to a wrong person, etc.
+            </li>
+            <li>
+                Select <strong>Satire</strong>, if the verdict states that the claim is clearly satire, for example as
+                it could originate satirical news outlets, such as "The Onion".
             </li>
             <li>
                 If the verdict provides ultimately conflicting/unclear information about the claim, select "Hard to
                 say".
             </li>
+        </ul>
+
+        <p>In judging the quality,</p>
+        <ul>
             <li>
                 When rating the quality of the summary, give the highest mark (5) when you <strong>cannot think of a way
                 to improve</strong> the summary. Give the lowest mark (1) if the summary is <strong>unrelated</strong>
@@ -121,10 +154,40 @@
     <div class="container">
         <div class='column' id="left">
             <div class="radio-box" id="firstForm">
-                <h3>Looking at the verdict only, The claim is</h3>
-                <input type="radio" id="true" name="verdict" value="true"><label for="true">True</label>
-                <input type="radio" id="false" name="verdict" value="false"><label for="false">False/Misleading</label>
-                <input type="radio" id="unk" name="verdict" value="unknown"><label for="unk">Hard to say</label>
+                <h3>Looking at the verdict only, the claim is</h3>
+                <table>
+                    <tr>
+                        <td>
+                            <input type="radio" id="true" name="verdict" value="true"><label for="true">True</label>
+                        </td>
+                        <td>
+                            <input type="radio" id="almost" name="verdict" value="almost"><label for="almost">Mostly True</label>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="radio" id="half" name="verdict" value="half"><label
+                                for="half">Half/Half</label>
+                        </td>
+                        <td>
+                            <input type="radio" id="hardly" name="verdict" value="hardly"><label for="hardly">Mostly
+                            False</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" id="false" name="verdict" value="false"><label for="false">False</label>
+                        </td>
+                        <td><input type="radio" id="misleading" name="verdict" value="misleading"><label
+                                for="misleading">Misleading</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" id="satire" name="verdict" value="satire"><label
+                                for="satire">Satire</label></td>
+                        <td><input type="radio" id="unk" name="verdict" value="unk"><label for="unk">Hard to say</label>
+                        </td>
+                    </tr>
+                </table>
             </div>
             <div>
                 <h3>Claim</h3>
@@ -142,7 +205,7 @@
 
         <div class='column' id="right" style="display: none">
             <div class="radio-box">
-                <h3>Is the explanation a good summary of the article?</h3>
+                <h3>Is the verdict a good summary of the article?</h3>
                 <input type="radio" id="rate0" name="rate" value="1"><label for="rate0">1</label>
                 <input type="radio" id="rate1" name="rate" value="2"><label for="rate1">2</label>
                 <input type="radio" id="rate2" name="rate" value="3"><label for="rate2">3</label>
@@ -165,10 +228,6 @@
 </crowd-form>
 
 <script>
-
-
-
-
 
 
     function reset() {
@@ -203,26 +262,30 @@
                 errorBox.scrollIntoView();
             }
         };
-        try {
-            workerID = document.querySelector('div.container-fluid.me-bar').querySelectorAll('span')[3].textContent.replace('Copied', '');
-        } catch (error) {
-            console.log(error);
-            //workerID = "A4Q85CBUBML3J";
-        }
-        fetch('https://mturk.schlegel-online.de/?worker_id=' + workerID).then(function (response) {
-            return response.json();
-        }).then(function (data) {
-            console.log(data);
-            if (data === true) {
-                alert("You have already obtained this qualification! " +
-                    "You can work on the full task instead! " +
-                    "If you continue to work on the qualification task, " +
-                    "your responses will be discarded and you won't get paid.");
-            }
 
-        }).catch(function () {
-            console.log("Booo");
-        });
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.get('mode') !== "requester-preview") {
+            const workerID = params.get("workerId");
+            console.log(workerID);
+            fetch('https://mturk.schlegel-online.de/?worker_id=' + workerID).then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                console.log(data);
+                if (data === true) {
+                    alert("You have already obtained this qualification! " +
+                        "You can work on the full task instead! " +
+                        "If you continue to work on the qualification task, " +
+                        "your responses will be discarded and you won't get paid.");
+                }
+
+            }).catch(function (error) {
+                console.log(error);
+            });
+        } else {
+            console.log('Preview mode.');
+        }
+
 
         function makingSureChecked() {
             // body...
