@@ -48,6 +48,9 @@
         <p>
             Make sure to read the full instructions!
         </p>
+        <p>
+            You should take around 1 minute per HIT.
+        </p>
     </short-instructions>
 
     <full-instructions>
@@ -151,114 +154,58 @@
             </li>
         </ul>
     </full-instructions>
-    <div class="container">
-        <div class='column' id="left">
-            <div class="radio-box" id="firstForm">
-                <h3>Looking at the verdict only, the claim is</h3>
-                <table>
-                    <tr>
-                        <td>
-                            <input type="radio" id="true" name="verdict" value="true"><label for="true">True</label>
-                        </td>
-                        <td>
-                            <input type="radio" id="almost" name="verdict" value="almost"><label for="almost">Mostly True</label>
-                        </td>
+    <crowd-tabs id="crowd-tabs">
 
-                    </tr>
-                    <tr>
-                        <td>
-                            <input type="radio" id="half" name="verdict" value="half"><label
-                                for="half">Half/Half</label>
-                        </td>
-                        <td>
-                            <input type="radio" id="hardly" name="verdict" value="hardly"><label for="hardly">Mostly
-                            False</label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><input type="radio" id="false" name="verdict" value="false"><label for="false">False</label>
-                        </td>
-                        <td><input type="radio" id="misleading" name="verdict" value="misleading"><label
-                                for="misleading">Misleading</label></td>
-                    </tr>
-                    <tr>
-                        <td><input type="radio" id="satire" name="verdict" value="satire"><label
-                                for="satire">Satire</label></td>
-                        <td><input type="radio" id="unk" name="verdict" value="unk"><label for="unk">Hard to say</label>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div>
-                <h3>Claim</h3>
-                <crowd-card>
-                    <div class="card">${claim}</div>
-                </crowd-card>
-                <h3>Verdict</h3>
-                <crowd-card>
-                    <div class="card">${verdict}
-                    </div>
-                </crowd-card>
-            </div>
-            <span onclick="reset();">Reset</span>
-        </div>
-
-        <div class='column' id="right" style="display: none">
-            <div class="radio-box">
-                <h3>Is the verdict a good summary of the article?</h3>
-                <input type="radio" id="rate0" name="rate" value="1"><label for="rate0">1</label>
-                <input type="radio" id="rate1" name="rate" value="2"><label for="rate1">2</label>
-                <input type="radio" id="rate2" name="rate" value="3"><label for="rate2">3</label>
-                <input type="radio" id="rate3" name="rate" value="4"><label for="rate3">4</label>
-                <input type="radio" id="rate4" name="rate" value="5"><label for="rate4">5</label>
-
-            </div>
-            <div>
-                <h3>Article</h3>
-                <crowd-card>
-                    <div class="card">
-                        ${text}
-                    </div>
-                </crowd-card>
-            </div>
-        </div>
-    </div>
-
-
+    </crowd-tabs>
 </crowd-form>
 
 <script>
 
 
-    function reset() {
+    function reset(i) {
         document
-            .querySelector('crowd-form')
+            .getElementById(`firstForm${i}`)
             .querySelectorAll('input[name="rate"]').forEach((e) => e.checked = false);
         document
-            .querySelector('crowd-form')
+            .getElementById(`firstForm${i}`)
             .querySelectorAll('input[name="verdict"]').forEach((e) => e.checked = false);
-        right.style = 'display: none;';
+        document.getElementById(`right${i}`).style = 'display: none;';
     }
 
-    function uncoverSecondPart() {
-        right.style = '';
+    function uncoverSecondPart(i) {
+        document.getElementById(`right${i}`).style = '';
     }
 
     document.addEventListener('all-crowd-elements-ready', () => {
-
-
-        firstForm.addEventListener('click', function (event) {
-            if (event.target && event.target.matches("input[type='radio']")) {
-                uncoverSecondPart();
-            }
-        });
+        for (let i = 1; i <= 10; i++) {
+            document.getElementById(`crowd-tabs`).innerHTML += renderTab(i);
+        }
+        // why do i have to loop through it twice? nobody knows
+        for (let i = 1; i <= 10; i++) {
+            document.getElementById(`firstForm${i}`).addEventListener("click", function (event) {
+                if (event.target && event.target.matches("input[type='radio']")) {
+                    uncoverSecondPart(i);
+                }
+            });
+        }
         document.querySelector('crowd-form').onsubmit = function (event) {
             errorBox.innerHTML = '';
-            if (makingSureChecked() === false) {
-                console.log(event);
+            let allChecked = makingSureChecked();
+            console.log(event);
+            console.log(allChecked);
+            if (!allChecked.every(elem => !!elem)) {
                 event.preventDefault();
-                console.log(errorBox);
-                errorBox.innerHTML = '<crowd-alert type="error">Please assign a rating to every item.</crowd-alert>';
+                let i = 1;
+                let errors = [];
+                allChecked.forEach(function (elem) {
+                    if (elem === false) {
+                        console.log(event);
+                        console.log(errorBox);
+                        errors.push(`Please assign a rating to items in Tab ${i}!`);
+                    }
+                    i++;
+                })
+                errorBox.innerHTML = "<crowd-alert type='error'>" + errors.join('<br/>') + "</crowd-alert>";
                 errorBox.scrollIntoView();
             }
         };
@@ -267,7 +214,6 @@
 
         if (params.get('mode') !== "requester-preview") {
             const workerID = params.get("workerId");
-            console.log(workerID);
             fetch('https://mturk.schlegel-online.de/?worker_id=' + workerID).then(function (response) {
                 return response.json();
             }).then(function (data) {
@@ -288,29 +234,103 @@
 
 
         function makingSureChecked() {
-            // body...
-            var rates = document
-                .querySelector('crowd-form')
-                .querySelectorAll('input[name="rate"]');
-            var verdicts = document
-                .querySelector('crowd-form')
-                .querySelectorAll('input[name="verdict"]');
-            var rate_flag = false;
-            var verdict_flag = false;
-            for (i = 0; i < rates.length; i++) {
-                if (rates[i].checked) {
-                    rate_flag = true;
-                    break;
+            let result = [];
+            for (let j = 1; j <= 10; j++) {
+                const rates = document
+                    .getElementById(`tab${j}`)
+                    .querySelectorAll(`input[name="rate${j}"]`);
+                const verdicts = document
+                    .getElementById(`tab${j}`)
+                    .querySelectorAll(`input[name="verdict${j}"]`);
+                let rate_flag = false;
+                let verdict_flag = false;
+                for (let i = 0; i < rates.length; i++) {
+                    if (rates[i].checked) {
+                        rate_flag = true;
+                        break;
+                    }
                 }
-            }
-            for (i = 0; i < verdicts.length; i++) {
-                if (verdicts[i].checked) {
-                    verdict_flag = true;
-                    break;
+                for (let i = 0; i < verdicts.length; i++) {
+                    if (verdicts[i].checked) {
+                        verdict_flag = true;
+                        break;
+                    }
                 }
+                result.push(rate_flag && verdict_flag);
             }
-            return rate_flag && verdict_flag;
-
+            return result;
         }
     });
+
+    function renderTab(i) {
+        return `
+<crowd-tab header="Tab ${i}" id="tab${i}" class="container">
+    <div className='column' id="left${i}">
+        <div className="radio-box" id="firstForm${i}">
+            <h3>Looking at the verdict only, the claim is</h3>
+            <table>
+                <tr>
+                    <td>
+                        <input type="radio" id="true${i}" name="verdict${i}" value="true"><label htmlFor="true${i}">True</label>
+                    </td>
+                    <td>
+                        <input type="radio" id="almost${i}" name="verdict${i}" value="almost"><label htmlFor="almost${i}">Mostly
+                            True</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="radio" id="half${i}" name="verdict${i}" value="half"><label htmlFor="half${i}">Half/Half</label>
+                    </td>
+                    <td>
+                        <input type="radio" id="hardly${i}" name="verdict${i}" value="hardly"><label htmlFor="hardly${i}">Mostly
+                            False</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="radio" id="false${i}" name="verdict${i}" value="false"><label htmlFor="false${i}">False</label>
+                    </td>
+                    <td><input type="radio" id="misleading${i}" name="verdict${i}" value="misleading"><label htmlFor="misleading${i}">Misleading</label></td>
+                </tr>
+                <tr>
+                    <td><input type="radio" id="satire${i}" name="verdict${i}" value="satire"><label htmlFor="satire${i}">Satire</label></td>
+                    <td><input type="radio" id="unk${i}" name="verdict${i}" value="unk"><label htmlFor="unk${i}">Hard to say</label>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <h3>Claim</h3>
+            <crowd-card>
+                <div className="card">` + "${claim" + `${i}}</div>
+            </crowd-card>
+            <h3>Verdict</h3>
+            <crowd-card>
+                <div className="card">` + "${verdict" + `${i}}</div>
+            </crowd-card>
+        </div>
+        <span onClick="reset(${i});">Reset</span>
+    </div>
+
+    <div className='column' id="right${i}" style="display: none">
+        <div className="radio-box">
+            <h3>Is the verdict a good summary of the article?</h3>
+            <input type="radio" id="rate0${i}" name="rate${i}" value="1"><label htmlFor="rate0${i}">1</label>
+            <input type="radio" id="rate1${i}" name="rate${i}" value="2"><label htmlFor="rate1${i}">2</label>
+            <input type="radio" id="rate2${i}" name="rate${i}" value="3"><label htmlFor="rate2${i}">3</label>
+            <input type="radio" id="rate3${i}" name="rate${i}" value="4"><label htmlFor="rate3${i}">4</label>
+            <input type="radio" id="rate4${i}" name="rate${i}" value="5"><label htmlFor="rate4${i}">5</label>
+
+        </div>
+        <div>
+            <h3>Article</h3>
+            <crowd-card>
+                <div className="card">
+                    ` + "${text" + `${i}}
+                </div>
+            </crowd-card>
+        </div>
+    </div>
+</crowd-tab>`
+    }
 </script>
