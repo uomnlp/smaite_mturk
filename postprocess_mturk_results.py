@@ -114,8 +114,8 @@ def main(infile, log_level, answer_fields, qualified_workers_file, processed_ass
         logger.debug(all_corrupted)
         logger.debug(all_uncorrupted)
         if all_corrupted and all_uncorrupted:
-            worker_acc_corrupted[w] = sum(all_corrupted) / len(all_corrupted) / 10
-            worker_acc_uncorrupted[w] = sum(all_uncorrupted) / len(all_uncorrupted) /10
+            worker_acc_corrupted[w] = sum(all_corrupted) / len(all_corrupted)
+            worker_acc_uncorrupted[w] = sum(all_uncorrupted) / len(all_uncorrupted)
             logger.debug(
                 f"{w} had {len(all_corrupted)} corrupted questions. {worker_acc_corrupted[w]} rating (vs {qualification_threshold}).")
         else:
