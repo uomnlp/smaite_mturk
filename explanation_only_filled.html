@@ -1,0 +1,943 @@
+<script src="https://assets.crowd.aws/crowd-html-elements.js" xmlns=""></script>
+<!--
+${claim1},${claim2},${claim3},${claim4},${claim5},${claim6}
+-->
+<style>
+    h3 {
+        margin-top: 10px;
+    }
+
+    crowd-card {
+        width: 100%;
+
+    }
+
+    .container {
+        display: grid;
+        grid-template-columns: 2fr 7fr 1fr;
+    }
+
+    .container > div {
+        margin: 10px;
+    }
+
+    .column {
+        display: grid;
+        grid-template-columns: auto;
+        grid-template-rows: minmax(150px, max-content) auto;
+    }
+
+    .card {
+        margin: 10px;
+        white-space: pre-wrap;
+    }
+
+    .radio-box {
+        margin-bottom: 20px;
+        height: fit-content;
+        padding-bottom: 10px;
+    }
+</style>
+
+<div id="errorBox"></div>
+<crowd-form>
+    <short-instructions>
+        <p>Given the verdict and the claim, try to predict whether the claim is true, false or misleading or whether
+            it's hard to judge.</p>
+
+        <p>Once you did, read the article that the verdict summarises, and rate on a scale from 1 to 5, whether
+            the verdict is a good summary of the article.</p>
+        <p>
+            Make sure to read the full instructions!
+        </p>
+        <p>
+            You should take around 1 minute per HIT.
+        </p>
+    </short-instructions>
+
+    <full-instructions>
+        <h2>Instructions</h2>
+        <p>
+            We are collecting ratings for summaries of fact verification articles to study explainable automated
+            fact verification.
+        </p>
+        <p>
+            In this task, you will be asked to judge the quality of (automatically generated) summaries of
+            fact verification articles.
+        </p>
+        <p>
+            This is a <strong>qualification task</strong>. Once you submit, and we approve your HITs, we will
+            issue you with a corresponding qualification that will allow you to participate in the main task.
+        </p>
+
+        <h3>Example</h3>
+        <table>
+            <tr>
+                <td>
+                    <u>Claim:</u> A Pfizer document contains a list of around 158,000 adverse events 'from their
+                    vaccine'.
+                </td>
+            </tr>
+            <tr>
+                <td><u>Verdict:</u> No it doesn't. The document lists a mixture of reported adverse events following
+                    vaccination. Many may not have been caused by the vaccine.
+                </td>
+            </tr>
+            <tr>
+                <td><u>Article:</u> A widely shared article on the Express website about the safety of Pfizer's Covid-19
+                    vaccine is misleading in several ways.<br/>It incorrectly claims that a recently published document
+                    about adverse events following vaccination is the first time the public have been allowed to see the
+                    clinical trial data that Pfizer submitted to the US Food and Drug Administration (FDA) for the
+                    authorisation of the vaccine. In fact, much of the data in this document does not come from Pfizer's
+                    clinical trials, and some adverse event data from the trials has been publicly available on the FDA
+                    website at least since December 2020. [...]
+                </td>
+            </tr>
+        </table>
+        <h3>Details</h3>
+        <p>You will need to <i>(a)</i> judge, whether the claim is true, based on the verdict only. </p>
+        <p>Afterwards, you will need to <i>(b)</i> assign a numeric score from 1 to 5 based on how well you think
+            the verdict summarises the full article (where 5 is the best).
+            Note that the full article appears only after you have judged the explanation.</p>
+
+        <p>In judging the (reported) truthfulness of the claim:</p>
+        <ul>
+            <li>
+                please disregard your personal opinion about the claim. It does not matter whether <i>you</i> think
+                it's true, but rather what the verdict states.
+            </li>
+            <li>
+                Select <strong>True</strong>, if the verdict states that the claim is true without any caveats.
+            </li>
+            <li>
+                Select <strong>Mostly</strong>, if the verdict states that the claim is true but there are some
+                lacking information or imprecisions.
+            </li>
+            <li>
+                Select <strong>Half/Half</strong>, if the verdict states that the claim is a mixture of correct and
+                false
+                information, for example when there are two parts to the claim but only one is correct.
+            </li>
+            <li>
+                Select <strong>Mostly False</strong>, if the verdict states that the claim is mostly false, for example
+                when it
+                is based on something that is true in principle but draws the wrong conclusions.
+            </li>
+            <li>
+                Select <strong>False</strong>, if the verdict clearly states that the claim is false, incorrect, made up
+                etc.
+            </li>
+            <li>
+                Select <strong>Misleading</strong>, if the verdict states that the claim is misleading. This is the case
+                when the claim describes something that happened in principle (e.g. someone said something) but takes it
+                out of context, exaggerates it, attributes it to a wrong person, etc.
+            </li>
+            <li>
+                Select <strong>Satire</strong>, if the verdict states that the claim is clearly satire, for example as
+                it could originate satirical news outlets, such as "The Onion".
+            </li>
+            <li>
+                If the verdict provides ultimately conflicting/unclear information about the claim, select "Hard to
+                say".
+            </li>
+        </ul>
+
+        <p>In judging the quality,</p>
+        <ul>
+            <li>
+                When rating the quality of the summary, give the highest mark (5) when you <strong>cannot think of a way
+                to improve</strong> the summary. Give the lowest mark (1) if the summary is <strong>unrelated</strong>
+                to the article. For ratings in between, consider the following:
+                <ul>
+                    <li>Does the summary capture <strong>main idea</strong> of the article?</li>
+                    <li>Does the summary leave <strong>important information</strong> mentioned in the article?</li>
+                    <li>Does the summary <strong>"invent"</strong> new information, not mentioned in the article?</li>
+                </ul>
+            </li>
+        </ul>
+    </full-instructions>
+    <crowd-tabs id="crowd-tabs">
+
+        <crowd-tab header="Tab 1" id="tab1" class="container">
+            <div className='column' id="left1">
+                <div className="radio-box" id="firstForm1">
+                    <h3>Looking at the verdict only, the claim is</h3>
+                    <table>
+                        <tr>
+                            <td>
+                                <input type="radio" id="true1" name="verdict1" value="true"><label htmlFor="true1">True</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="almost1" name="verdict1" value="almost"><label htmlFor="almost1">Mostly
+                                True</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="radio" id="half1" name="verdict1" value="half"><label htmlFor="half1">Half/Half</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="hardly1" name="verdict1" value="hardly"><label htmlFor="hardly1">Mostly
+                                False</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="false1" name="verdict1" value="false"><label htmlFor="false1">False</label>
+                            </td>
+                            <td><input type="radio" id="misleading1" name="verdict1" value="misleading"><label htmlFor="misleading1">Misleading</label></td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="satire1" name="verdict1" value="satire"><label htmlFor="satire1">Satire</label></td>
+                            <td><input type="radio" id="unk1" name="verdict1" value="unk"><label htmlFor="unk1">Hard to say</label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <h3>Claim</h3>
+                    <crowd-card>
+                        <div className="card">{claim1}</div>
+                    </crowd-card>
+                    <h3>Verdict</h3>
+                    <crowd-card>
+                        <div className="card">{verdict1}</div>
+                    </crowd-card>
+                </div>
+                <span onClick="reset(1);">Reset</span>
+            </div>
+
+            <div className='column' id="right1" style="display: none">
+                <div className="radio-box">
+                    <h3>Is the verdict a good summary of the article?</h3>
+                    <input type="radio" id="rate01" name="rate1" value="1"><label htmlFor="rate01">1</label>
+                    <input type="radio" id="rate11" name="rate1" value="2"><label htmlFor="rate11">2</label>
+                    <input type="radio" id="rate21" name="rate1" value="3"><label htmlFor="rate21">3</label>
+                    <input type="radio" id="rate31" name="rate1" value="4"><label htmlFor="rate31">4</label>
+                    <input type="radio" id="rate41" name="rate1" value="5"><label htmlFor="rate41">5</label>
+
+                </div>
+                <div>
+                    <h3>Article</h3>
+                    <crowd-card>
+                        <div className="card">{text1}</div>
+                    </crowd-card>
+                </div>
+            </div>
+        </crowd-tab>
+
+
+        <crowd-tab header="Tab 2" id="tab2" class="container">
+            <div className='column' id="left2">
+                <div className="radio-box" id="firstForm2">
+                    <h3>Looking at the verdict only, the claim is</h3>
+                    <table>
+                        <tr>
+                            <td>
+                                <input type="radio" id="true2" name="verdict2" value="true"><label htmlFor="true2">True</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="almost2" name="verdict2" value="almost"><label htmlFor="almost2">Mostly
+                                True</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="radio" id="half2" name="verdict2" value="half"><label htmlFor="half2">Half/Half</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="hardly2" name="verdict2" value="hardly"><label htmlFor="hardly2">Mostly
+                                False</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="false2" name="verdict2" value="false"><label htmlFor="false2">False</label>
+                            </td>
+                            <td><input type="radio" id="misleading2" name="verdict2" value="misleading"><label htmlFor="misleading2">Misleading</label></td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="satire2" name="verdict2" value="satire"><label htmlFor="satire2">Satire</label></td>
+                            <td><input type="radio" id="unk2" name="verdict2" value="unk"><label htmlFor="unk2">Hard to say</label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <h3>Claim</h3>
+                    <crowd-card>
+                        <div className="card">{claim2}</div>
+                    </crowd-card>
+                    <h3>Verdict</h3>
+                    <crowd-card>
+                        <div className="card">{verdict2}</div>
+                    </crowd-card>
+                </div>
+                <span onClick="reset(2);">Reset</span>
+            </div>
+
+            <div className='column' id="right2" style="display: none">
+                <div className="radio-box">
+                    <h3>Is the verdict a good summary of the article?</h3>
+                    <input type="radio" id="rate02" name="rate2" value="1"><label htmlFor="rate02">1</label>
+                    <input type="radio" id="rate12" name="rate2" value="2"><label htmlFor="rate12">2</label>
+                    <input type="radio" id="rate22" name="rate2" value="3"><label htmlFor="rate22">3</label>
+                    <input type="radio" id="rate32" name="rate2" value="4"><label htmlFor="rate32">4</label>
+                    <input type="radio" id="rate42" name="rate2" value="5"><label htmlFor="rate42">5</label>
+
+                </div>
+                <div>
+                    <h3>Article</h3>
+                    <crowd-card>
+                        <div className="card">{text2}</div>
+                    </crowd-card>
+                </div>
+            </div>
+        </crowd-tab>
+
+
+        <crowd-tab header="Tab 3" id="tab3" class="container">
+            <div className='column' id="left3">
+                <div className="radio-box" id="firstForm3">
+                    <h3>Looking at the verdict only, the claim is</h3>
+                    <table>
+                        <tr>
+                            <td>
+                                <input type="radio" id="true3" name="verdict3" value="true"><label htmlFor="true3">True</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="almost3" name="verdict3" value="almost"><label htmlFor="almost3">Mostly
+                                True</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="radio" id="half3" name="verdict3" value="half"><label htmlFor="half3">Half/Half</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="hardly3" name="verdict3" value="hardly"><label htmlFor="hardly3">Mostly
+                                False</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="false3" name="verdict3" value="false"><label htmlFor="false3">False</label>
+                            </td>
+                            <td><input type="radio" id="misleading3" name="verdict3" value="misleading"><label htmlFor="misleading3">Misleading</label></td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="satire3" name="verdict3" value="satire"><label htmlFor="satire3">Satire</label></td>
+                            <td><input type="radio" id="unk3" name="verdict3" value="unk"><label htmlFor="unk3">Hard to say</label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <h3>Claim</h3>
+                    <crowd-card>
+                        <div className="card">{claim3}</div>
+                    </crowd-card>
+                    <h3>Verdict</h3>
+                    <crowd-card>
+                        <div className="card">{verdict3}</div>
+                    </crowd-card>
+                </div>
+                <span onClick="reset(3);">Reset</span>
+            </div>
+
+            <div className='column' id="right3" style="display: none">
+                <div className="radio-box">
+                    <h3>Is the verdict a good summary of the article?</h3>
+                    <input type="radio" id="rate03" name="rate3" value="1"><label htmlFor="rate03">1</label>
+                    <input type="radio" id="rate13" name="rate3" value="2"><label htmlFor="rate13">2</label>
+                    <input type="radio" id="rate23" name="rate3" value="3"><label htmlFor="rate23">3</label>
+                    <input type="radio" id="rate33" name="rate3" value="4"><label htmlFor="rate33">4</label>
+                    <input type="radio" id="rate43" name="rate3" value="5"><label htmlFor="rate43">5</label>
+
+                </div>
+                <div>
+                    <h3>Article</h3>
+                    <crowd-card>
+                        <div className="card">{text3}</div>
+                    </crowd-card>
+                </div>
+            </div>
+        </crowd-tab>
+
+
+        <crowd-tab header="Tab 4" id="tab4" class="container">
+            <div className='column' id="left4">
+                <div className="radio-box" id="firstForm4">
+                    <h3>Looking at the verdict only, the claim is</h3>
+                    <table>
+                        <tr>
+                            <td>
+                                <input type="radio" id="true4" name="verdict4" value="true"><label htmlFor="true4">True</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="almost4" name="verdict4" value="almost"><label htmlFor="almost4">Mostly
+                                True</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="radio" id="half4" name="verdict4" value="half"><label htmlFor="half4">Half/Half</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="hardly4" name="verdict4" value="hardly"><label htmlFor="hardly4">Mostly
+                                False</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="false4" name="verdict4" value="false"><label htmlFor="false4">False</label>
+                            </td>
+                            <td><input type="radio" id="misleading4" name="verdict4" value="misleading"><label htmlFor="misleading4">Misleading</label></td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="satire4" name="verdict4" value="satire"><label htmlFor="satire4">Satire</label></td>
+                            <td><input type="radio" id="unk4" name="verdict4" value="unk"><label htmlFor="unk4">Hard to say</label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <h3>Claim</h3>
+                    <crowd-card>
+                        <div className="card">{claim4}</div>
+                    </crowd-card>
+                    <h3>Verdict</h3>
+                    <crowd-card>
+                        <div className="card">{verdict4}</div>
+                    </crowd-card>
+                </div>
+                <span onClick="reset(4);">Reset</span>
+            </div>
+
+            <div className='column' id="right4" style="display: none">
+                <div className="radio-box">
+                    <h3>Is the verdict a good summary of the article?</h3>
+                    <input type="radio" id="rate04" name="rate4" value="1"><label htmlFor="rate04">1</label>
+                    <input type="radio" id="rate14" name="rate4" value="2"><label htmlFor="rate14">2</label>
+                    <input type="radio" id="rate24" name="rate4" value="3"><label htmlFor="rate24">3</label>
+                    <input type="radio" id="rate34" name="rate4" value="4"><label htmlFor="rate34">4</label>
+                    <input type="radio" id="rate44" name="rate4" value="5"><label htmlFor="rate44">5</label>
+
+                </div>
+                <div>
+                    <h3>Article</h3>
+                    <crowd-card>
+                        <div className="card">{text4}</div>
+                    </crowd-card>
+                </div>
+            </div>
+        </crowd-tab>
+
+
+        <crowd-tab header="Tab 5" id="tab5" class="container">
+            <div className='column' id="left5">
+                <div className="radio-box" id="firstForm5">
+                    <h3>Looking at the verdict only, the claim is</h3>
+                    <table>
+                        <tr>
+                            <td>
+                                <input type="radio" id="true5" name="verdict5" value="true"><label htmlFor="true5">True</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="almost5" name="verdict5" value="almost"><label htmlFor="almost5">Mostly
+                                True</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="radio" id="half5" name="verdict5" value="half"><label htmlFor="half5">Half/Half</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="hardly5" name="verdict5" value="hardly"><label htmlFor="hardly5">Mostly
+                                False</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="false5" name="verdict5" value="false"><label htmlFor="false5">False</label>
+                            </td>
+                            <td><input type="radio" id="misleading5" name="verdict5" value="misleading"><label htmlFor="misleading5">Misleading</label></td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="satire5" name="verdict5" value="satire"><label htmlFor="satire5">Satire</label></td>
+                            <td><input type="radio" id="unk5" name="verdict5" value="unk"><label htmlFor="unk5">Hard to say</label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <h3>Claim</h3>
+                    <crowd-card>
+                        <div className="card">{claim5}</div>
+                    </crowd-card>
+                    <h3>Verdict</h3>
+                    <crowd-card>
+                        <div className="card">{verdict5}</div>
+                    </crowd-card>
+                </div>
+                <span onClick="reset(5);">Reset</span>
+            </div>
+
+            <div className='column' id="right5" style="display: none">
+                <div className="radio-box">
+                    <h3>Is the verdict a good summary of the article?</h3>
+                    <input type="radio" id="rate05" name="rate5" value="1"><label htmlFor="rate05">1</label>
+                    <input type="radio" id="rate15" name="rate5" value="2"><label htmlFor="rate15">2</label>
+                    <input type="radio" id="rate25" name="rate5" value="3"><label htmlFor="rate25">3</label>
+                    <input type="radio" id="rate35" name="rate5" value="4"><label htmlFor="rate35">4</label>
+                    <input type="radio" id="rate45" name="rate5" value="5"><label htmlFor="rate45">5</label>
+
+                </div>
+                <div>
+                    <h3>Article</h3>
+                    <crowd-card>
+                        <div className="card">{text5}</div>
+                    </crowd-card>
+                </div>
+            </div>
+        </crowd-tab>
+
+
+        <crowd-tab header="Tab 6" id="tab6" class="container">
+            <div className='column' id="left6">
+                <div className="radio-box" id="firstForm6">
+                    <h3>Looking at the verdict only, the claim is</h3>
+                    <table>
+                        <tr>
+                            <td>
+                                <input type="radio" id="true6" name="verdict6" value="true"><label htmlFor="true6">True</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="almost6" name="verdict6" value="almost"><label htmlFor="almost6">Mostly
+                                True</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="radio" id="half6" name="verdict6" value="half"><label htmlFor="half6">Half/Half</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="hardly6" name="verdict6" value="hardly"><label htmlFor="hardly6">Mostly
+                                False</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="false6" name="verdict6" value="false"><label htmlFor="false6">False</label>
+                            </td>
+                            <td><input type="radio" id="misleading6" name="verdict6" value="misleading"><label htmlFor="misleading6">Misleading</label></td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="satire6" name="verdict6" value="satire"><label htmlFor="satire6">Satire</label></td>
+                            <td><input type="radio" id="unk6" name="verdict6" value="unk"><label htmlFor="unk6">Hard to say</label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <h3>Claim</h3>
+                    <crowd-card>
+                        <div className="card">{claim6}</div>
+                    </crowd-card>
+                    <h3>Verdict</h3>
+                    <crowd-card>
+                        <div className="card">{verdict6}</div>
+                    </crowd-card>
+                </div>
+                <span onClick="reset(6);">Reset</span>
+            </div>
+
+            <div className='column' id="right6" style="display: none">
+                <div className="radio-box">
+                    <h3>Is the verdict a good summary of the article?</h3>
+                    <input type="radio" id="rate06" name="rate6" value="1"><label htmlFor="rate06">1</label>
+                    <input type="radio" id="rate16" name="rate6" value="2"><label htmlFor="rate16">2</label>
+                    <input type="radio" id="rate26" name="rate6" value="3"><label htmlFor="rate26">3</label>
+                    <input type="radio" id="rate36" name="rate6" value="4"><label htmlFor="rate36">4</label>
+                    <input type="radio" id="rate46" name="rate6" value="5"><label htmlFor="rate46">5</label>
+
+                </div>
+                <div>
+                    <h3>Article</h3>
+                    <crowd-card>
+                        <div className="card">{text6}</div>
+                    </crowd-card>
+                </div>
+            </div>
+        </crowd-tab>
+
+
+        <crowd-tab header="Tab 7" id="tab7" class="container">
+            <div className='column' id="left7">
+                <div className="radio-box" id="firstForm7">
+                    <h3>Looking at the verdict only, the claim is</h3>
+                    <table>
+                        <tr>
+                            <td>
+                                <input type="radio" id="true7" name="verdict7" value="true"><label htmlFor="true7">True</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="almost7" name="verdict7" value="almost"><label htmlFor="almost7">Mostly
+                                True</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="radio" id="half7" name="verdict7" value="half"><label htmlFor="half7">Half/Half</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="hardly7" name="verdict7" value="hardly"><label htmlFor="hardly7">Mostly
+                                False</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="false7" name="verdict7" value="false"><label htmlFor="false7">False</label>
+                            </td>
+                            <td><input type="radio" id="misleading7" name="verdict7" value="misleading"><label htmlFor="misleading7">Misleading</label></td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="satire7" name="verdict7" value="satire"><label htmlFor="satire7">Satire</label></td>
+                            <td><input type="radio" id="unk7" name="verdict7" value="unk"><label htmlFor="unk7">Hard to say</label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <h3>Claim</h3>
+                    <crowd-card>
+                        <div className="card">{claim7}</div>
+                    </crowd-card>
+                    <h3>Verdict</h3>
+                    <crowd-card>
+                        <div className="card">{verdict7}</div>
+                    </crowd-card>
+                </div>
+                <span onClick="reset(7);">Reset</span>
+            </div>
+
+            <div className='column' id="right7" style="display: none">
+                <div className="radio-box">
+                    <h3>Is the verdict a good summary of the article?</h3>
+                    <input type="radio" id="rate07" name="rate7" value="1"><label htmlFor="rate07">1</label>
+                    <input type="radio" id="rate17" name="rate7" value="2"><label htmlFor="rate17">2</label>
+                    <input type="radio" id="rate27" name="rate7" value="3"><label htmlFor="rate27">3</label>
+                    <input type="radio" id="rate37" name="rate7" value="4"><label htmlFor="rate37">4</label>
+                    <input type="radio" id="rate47" name="rate7" value="5"><label htmlFor="rate47">5</label>
+
+                </div>
+                <div>
+                    <h3>Article</h3>
+                    <crowd-card>
+                        <div className="card">{text7}</div>
+                    </crowd-card>
+                </div>
+            </div>
+        </crowd-tab>
+
+
+        <crowd-tab header="Tab 8" id="tab8" class="container">
+            <div className='column' id="left8">
+                <div className="radio-box" id="firstForm8">
+                    <h3>Looking at the verdict only, the claim is</h3>
+                    <table>
+                        <tr>
+                            <td>
+                                <input type="radio" id="true8" name="verdict8" value="true"><label htmlFor="true8">True</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="almost8" name="verdict8" value="almost"><label htmlFor="almost8">Mostly
+                                True</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="radio" id="half8" name="verdict8" value="half"><label htmlFor="half8">Half/Half</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="hardly8" name="verdict8" value="hardly"><label htmlFor="hardly8">Mostly
+                                False</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="false8" name="verdict8" value="false"><label htmlFor="false8">False</label>
+                            </td>
+                            <td><input type="radio" id="misleading8" name="verdict8" value="misleading"><label htmlFor="misleading8">Misleading</label></td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="satire8" name="verdict8" value="satire"><label htmlFor="satire8">Satire</label></td>
+                            <td><input type="radio" id="unk8" name="verdict8" value="unk"><label htmlFor="unk8">Hard to say</label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <h3>Claim</h3>
+                    <crowd-card>
+                        <div className="card">{claim8}</div>
+                    </crowd-card>
+                    <h3>Verdict</h3>
+                    <crowd-card>
+                        <div className="card">{verdict8}</div>
+                    </crowd-card>
+                </div>
+                <span onClick="reset(8);">Reset</span>
+            </div>
+
+            <div className='column' id="right8" style="display: none">
+                <div className="radio-box">
+                    <h3>Is the verdict a good summary of the article?</h3>
+                    <input type="radio" id="rate08" name="rate8" value="1"><label htmlFor="rate08">1</label>
+                    <input type="radio" id="rate18" name="rate8" value="2"><label htmlFor="rate18">2</label>
+                    <input type="radio" id="rate28" name="rate8" value="3"><label htmlFor="rate28">3</label>
+                    <input type="radio" id="rate38" name="rate8" value="4"><label htmlFor="rate38">4</label>
+                    <input type="radio" id="rate48" name="rate8" value="5"><label htmlFor="rate48">5</label>
+
+                </div>
+                <div>
+                    <h3>Article</h3>
+                    <crowd-card>
+                        <div className="card">{text8}</div>
+                    </crowd-card>
+                </div>
+            </div>
+        </crowd-tab>
+
+
+        <crowd-tab header="Tab 9" id="tab9" class="container">
+            <div className='column' id="left9">
+                <div className="radio-box" id="firstForm9">
+                    <h3>Looking at the verdict only, the claim is</h3>
+                    <table>
+                        <tr>
+                            <td>
+                                <input type="radio" id="true9" name="verdict9" value="true"><label htmlFor="true9">True</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="almost9" name="verdict9" value="almost"><label htmlFor="almost9">Mostly
+                                True</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="radio" id="half9" name="verdict9" value="half"><label htmlFor="half9">Half/Half</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="hardly9" name="verdict9" value="hardly"><label htmlFor="hardly9">Mostly
+                                False</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="false9" name="verdict9" value="false"><label htmlFor="false9">False</label>
+                            </td>
+                            <td><input type="radio" id="misleading9" name="verdict9" value="misleading"><label htmlFor="misleading9">Misleading</label></td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="satire9" name="verdict9" value="satire"><label htmlFor="satire9">Satire</label></td>
+                            <td><input type="radio" id="unk9" name="verdict9" value="unk"><label htmlFor="unk9">Hard to say</label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <h3>Claim</h3>
+                    <crowd-card>
+                        <div className="card">{claim9}</div>
+                    </crowd-card>
+                    <h3>Verdict</h3>
+                    <crowd-card>
+                        <div className="card">{verdict9}</div>
+                    </crowd-card>
+                </div>
+                <span onClick="reset(9);">Reset</span>
+            </div>
+
+            <div className='column' id="right9" style="display: none">
+                <div className="radio-box">
+                    <h3>Is the verdict a good summary of the article?</h3>
+                    <input type="radio" id="rate09" name="rate9" value="1"><label htmlFor="rate09">1</label>
+                    <input type="radio" id="rate19" name="rate9" value="2"><label htmlFor="rate19">2</label>
+                    <input type="radio" id="rate29" name="rate9" value="3"><label htmlFor="rate29">3</label>
+                    <input type="radio" id="rate39" name="rate9" value="4"><label htmlFor="rate39">4</label>
+                    <input type="radio" id="rate49" name="rate9" value="5"><label htmlFor="rate49">5</label>
+
+                </div>
+                <div>
+                    <h3>Article</h3>
+                    <crowd-card>
+                        <div className="card">{text9}</div>
+                    </crowd-card>
+                </div>
+            </div>
+        </crowd-tab>
+
+
+        <crowd-tab header="Tab 10" id="tab10" class="container">
+            <div className='column' id="left10">
+                <div className="radio-box" id="firstForm10">
+                    <h3>Looking at the verdict only, the claim is</h3>
+                    <table>
+                        <tr>
+                            <td>
+                                <input type="radio" id="true10" name="verdict10" value="true"><label htmlFor="true10">True</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="almost10" name="verdict10" value="almost"><label htmlFor="almost10">Mostly
+                                True</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="radio" id="half10" name="verdict10" value="half"><label htmlFor="half10">Half/Half</label>
+                            </td>
+                            <td>
+                                <input type="radio" id="hardly10" name="verdict10" value="hardly"><label htmlFor="hardly10">Mostly
+                                False</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="false10" name="verdict10" value="false"><label htmlFor="false10">False</label>
+                            </td>
+                            <td><input type="radio" id="misleading10" name="verdict10" value="misleading"><label htmlFor="misleading10">Misleading</label></td>
+                        </tr>
+                        <tr>
+                            <td><input type="radio" id="satire10" name="verdict10" value="satire"><label htmlFor="satire10">Satire</label></td>
+                            <td><input type="radio" id="unk10" name="verdict10" value="unk"><label htmlFor="unk10">Hard to say</label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <h3>Claim</h3>
+                    <crowd-card>
+                        <div className="card">{claim10}</div>
+                    </crowd-card>
+                    <h3>Verdict</h3>
+                    <crowd-card>
+                        <div className="card">{verdict10}</div>
+                    </crowd-card>
+                </div>
+                <span onClick="reset(10);">Reset</span>
+            </div>
+
+            <div className='column' id="right10" style="display: none">
+                <div className="radio-box">
+                    <h3>Is the verdict a good summary of the article?</h3>
+                    <input type="radio" id="rate010" name="rate10" value="1"><label htmlFor="rate010">1</label>
+                    <input type="radio" id="rate110" name="rate10" value="2"><label htmlFor="rate110">2</label>
+                    <input type="radio" id="rate210" name="rate10" value="3"><label htmlFor="rate210">3</label>
+                    <input type="radio" id="rate310" name="rate10" value="4"><label htmlFor="rate310">4</label>
+                    <input type="radio" id="rate410" name="rate10" value="5"><label htmlFor="rate410">5</label>
+
+                </div>
+                <div>
+                    <h3>Article</h3>
+                    <crowd-card>
+                        <div className="card">{text10}</div>
+                    </crowd-card>
+                </div>
+            </div>
+        </crowd-tab>
+
+
+    </crowd-tabs>
+</crowd-form>
+
+<script>
+
+
+    function reset(i) {
+        document
+            .getElementById("firstForm"+i)
+            .querySelectorAll('input[name="rate"]').forEach((e) => e.checked = false);
+        document
+            .getElementById("firstForm"+i)
+            .querySelectorAll('input[name="verdict"]').forEach((e) => e.checked = false);
+        document.getElementById("right"+i).style = 'display: none;';
+    }
+
+    function uncoverSecondPart(i) {
+        document.getElementById("right" + i).style = '';
+    }
+
+    document.addEventListener('all-crowd-elements-ready', () => {
+        for (let i = 1; i <= 10; i++) {
+            document.getElementById('firstForm'+i).addEventListener("click", function (event) {
+                if (event.target && event.target.matches("input[type='radio']")) {
+                    uncoverSecondPart(i);
+                }
+            });
+        }
+        document.querySelector('crowd-form').onsubmit = function (event) {
+            errorBox.innerHTML = '';
+            let allChecked = makingSureChecked();
+            console.log(event);
+            console.log(allChecked);
+            if (!allChecked.every(elem => !!elem)) {
+                event.preventDefault();
+                let i = 1;
+                let errors = [];
+                allChecked.forEach(function (elem) {
+                    if (elem === false) {
+                        console.log(event);
+                        console.log(errorBox);
+                        errors.push(`Please assign a rating to items in Tab ${i}!`);
+                    }
+                    i++;
+                })
+                errorBox.innerHTML = "<crowd-alert type='error'>" + errors.join('<br/>') + "</crowd-alert>";
+                errorBox.scrollIntoView();
+            }
+        };
+
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.get('mode') !== "requester-preview") {
+            const workerID = params.get("workerId");
+            fetch('https://mturk.schlegel-online.de/?worker_id=' + workerID).then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                console.log(data);
+                if (data === true) {
+                    alert("You have already obtained this qualification! " +
+                        "You can work on the full task instead! " +
+                        "If you continue to work on the qualification task, " +
+                        "your responses will be discarded and you won't get paid.");
+                }
+
+            }).catch(function (error) {
+                console.log(error);
+            });
+        } else {
+            console.log('Preview mode.');
+        }
+
+
+        function makingSureChecked() {
+            let result = [];
+            for (let j = 1; j <= 10; j++) {
+                const rates = document
+                    .getElementById("tab"+j)
+                    .querySelectorAll('input[name="rate' + j + '"]');
+                const verdicts = document
+                    .getElementById("tab"+j)
+                    .querySelectorAll('input[name="verdict' + j + '"]');
+                let rate_flag = false;
+                let verdict_flag = false;
+                for (let i = 0; i < rates.length; i++) {
+                    if (rates[i].checked) {
+                        rate_flag = true;
+                        break;
+                    }
+                }
+                for (let i = 0; i < verdicts.length; i++) {
+                    if (verdicts[i].checked) {
+                        verdict_flag = true;
+                        break;
+                    }
+                }
+                result.push(rate_flag && verdict_flag);
+            }
+            return result;
+        }
+    });
+
+</script>

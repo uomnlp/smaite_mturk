@@ -1,0 +1,116 @@
+<script src="https://assets.crowd.aws/crowd-html-elements.js"></script>
+<script src='https://s3.amazonaws.com/mturk-public/externalHIT_v1.js'></script>
+<crowd-entity-annotation name="crowd-entity-annotation" header='Title: ${Title}' labels="[{'label': 'Evidence', 'shortDisplayName': 'EVI', 'fullDisplayName': 'Evidence'}]" text='${Text}'>
+    <full-instructions header="Fact-checking instructions">
+        <ol>
+            <li><strong>Read</strong> the text carefully.</li>
+            <li><strong>Highlight</strong> sections of the text that you think it can be viewed as evidence that support the claim.</li>
+            <li>To <strong>change</strong> a label, choose highlighted text and select a new label.</li>
+            <li>To <strong>remove</strong> a label from highlighted text, choose the X next to the abbreviated label name on the highlighted text.</li>
+            <li>You can select all of a previously highlighted text, but not a portion of it.</li>
+        </ol>
+    </full-instructions>
+    <short-instructions>
+        Apply labels to words or phrases.
+    </short-instructions>
+    <div id="articleQuestions" style="position: absolute; bottom: 0;">
+        <form method action>
+            <h3>Is the explanation a good summary of the evidence?</h3>
+            <input type="radio" id="rate0" name="rate" value="0"><label for="rate0">0</label>
+            <input type="radio" id="rate1" name="rate" value="1"><label for="rate1">1</label>
+            <input type="radio" id="rate2" name="rate" value="2"><label for="rate2">2</label>
+            <input type="radio" id="rate3" name="rate" value="3"><label for="rate3">3</label>
+            <input type="radio" id="rate4" name="rate" value="4"><label for="rate4">4</label>
+            <h3>Looking at the explanation only, what is the most likely verdict?</h3>
+            <input type="radio" id="true" name="verdict" value="true"><label for="true">True</label>
+            <input type="radio" id="false" name="verdict" value="false"><label for="false">False/Misleading</label>
+            <input type="radio" id="unk" name="verdict" value="unknown"><label for="unk">Unknown</label>
+        </form>
+    </div>
+</crowd-entity-annotation>
+
+        <script>
+        alert(turkSetAssignmentID());
+        document.addEventListener('all-crowd-elements-ready', () => {
+            document
+                .querySelector('crowd-entity-annotation')
+                .shadowRoot
+                .querySelector('crowd-form')
+                .form
+                .setAttribute('style', 'float: right; width: 45%');
+            document
+                .querySelector('crowd-entity-annotation')
+                .shadowRoot
+                .querySelector('crowd-form footer-content label').innerHTML = 'No evidence to label';
+             document
+                 .querySelector('crowd-entity-annotation')
+                 .shadowRoot
+                 .querySelector('crowd-form').form.insertAdjacentHTML('beforebegin', '<div id="inline_article" style="float: left; width: 45%; height: 100%; position: relative;"><h2>Claim: <p>'+'${Claim}'+'</p></h2><h2>Explanation: <p>'+'${Explanation}'+'</p></h2></div>');
+             document
+                 .querySelector('crowd-entity-annotation')
+                 .shadowRoot
+                 .querySelector('crowd-form #inline_article')
+                 .appendChild(articleQuestions);
+            document
+                .querySelector('crowd-entity-annotation')
+                .shadowRoot
+                .querySelectorAll('p')
+                .forEach((item, index) => { item.setAttribute('style', 'font-size: 1em;'); });
+            document
+                .querySelector('crowd-entity-annotation')
+                .shadowRoot
+                .querySelectorAll('label')
+                .forEach((item, index) => { item.setAttribute('style', 'margin-left: 5px; margin-right: 20px;'); })
+            /*document
+                .querySelector('crowd-entity-annotation')
+                .shadowRoot
+                .querySelectorAll('input')
+                .forEach((item, index) => { item.required = true; })*/
+            document
+                .querySelector('crowd-entity-annotation')
+                .shadowRoot
+                .querySelector('crowd-form')
+                .shadowRoot
+                .querySelector('#actionsContainer')
+                .querySelector('button')
+                .addEventListener("click", function(event){
+                if (makingSureChecked()==false) {
+                    event.preventDefault();
+                    alert('Please select from the questionaire');
+                }
+});
+                function makingSureChecked() {
+            // body...
+            var rates = document
+                 .querySelector('crowd-entity-annotation')
+                 .shadowRoot
+                 .querySelectorAll('input[name="rate"]');
+            var verdicts = document
+                 .querySelector('crowd-entity-annotation')
+                 .shadowRoot
+                 .querySelectorAll('input[name="verdict"]');
+            var rate_flag = false;
+            var verdict_flag = false;
+            for (i=0; i<rates.length; i++) {
+                if (rates[i].checked) {
+                    rate_flag = true;
+                    break;
+                }
+            }
+            for (i=0; i<verdicts.length; i++) {
+                if (verdicts[i].checked) {
+                    verdict_flag = true;
+                    break;
+                }
+            }
+            if (rate_flag && verdict_flag) {
+                return true;
+            }
+            else {
+                return false;
+            }
+
+        }
+        });
+        </script>
+<!--<script>turkSetAssignmentID()</script>-->

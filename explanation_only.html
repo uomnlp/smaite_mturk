@@ -1,5 +1,7 @@
 <script src="https://assets.crowd.aws/crowd-html-elements.js" xmlns=""></script>
-
+<!--
+${claim1},${claim2},${claim3},${claim4},${claim5},${claim6}
+-->
 <style>
     h3 {
         margin-top: 10px;
@@ -164,25 +166,21 @@
 
     function reset(i) {
         document
-            .getElementById(`firstForm${i}`)
+            .getElementById("firstForm"+i)
             .querySelectorAll('input[name="rate"]').forEach((e) => e.checked = false);
         document
-            .getElementById(`firstForm${i}`)
+            .getElementById("firstForm"+i)
             .querySelectorAll('input[name="verdict"]').forEach((e) => e.checked = false);
-        document.getElementById(`right${i}`).style = 'display: none;';
+        document.getElementById("right"+i).style = 'display: none;';
     }
 
     function uncoverSecondPart(i) {
-        document.getElementById(`right${i}`).style = '';
+        document.getElementById("right" + i).style = '';
     }
 
     document.addEventListener('all-crowd-elements-ready', () => {
         for (let i = 1; i <= 10; i++) {
-            document.getElementById(`crowd-tabs`).innerHTML += renderTab(i);
-        }
-        // why do i have to loop through it twice? nobody knows
-        for (let i = 1; i <= 10; i++) {
-            document.getElementById(`firstForm${i}`).addEventListener("click", function (event) {
+            document.getElementById('firstForm'+i).addEventListener("click", function (event) {
                 if (event.target && event.target.matches("input[type='radio']")) {
                     uncoverSecondPart(i);
                 }
@@ -201,7 +199,7 @@
                     if (elem === false) {
                         console.log(event);
                         console.log(errorBox);
-                        errors.push(`Please assign a rating to items in Tab ${i}!`);
+                        errors.push("Please assign a rating to items in Tab " + i + "!");
                     }
                     i++;
                 })
@@ -237,11 +235,11 @@
             let result = [];
             for (let j = 1; j <= 10; j++) {
                 const rates = document
-                    .getElementById(`tab${j}`)
-                    .querySelectorAll(`input[name="rate${j}"]`);
+                    .getElementById("tab"+j)
+                    .querySelectorAll('input[name="rate' + j + '"]');
                 const verdicts = document
-                    .getElementById(`tab${j}`)
-                    .querySelectorAll(`input[name="verdict${j}"]`);
+                    .getElementById("tab"+j)
+                    .querySelectorAll('input[name="verdict' + j + '"]');
                 let rate_flag = false;
                 let verdict_flag = false;
                 for (let i = 0; i < rates.length; i++) {
@@ -262,75 +260,4 @@
         }
     });
 
-    function renderTab(i) {
-        return `
-<crowd-tab header="Tab ${i}" id="tab${i}" class="container">
-    <div className='column' id="left${i}">
-        <div className="radio-box" id="firstForm${i}">
-            <h3>Looking at the verdict only, the claim is</h3>
-            <table>
-                <tr>
-                    <td>
-                        <input type="radio" id="true${i}" name="verdict${i}" value="true"><label htmlFor="true${i}">True</label>
-                    </td>
-                    <td>
-                        <input type="radio" id="almost${i}" name="verdict${i}" value="almost"><label htmlFor="almost${i}">Mostly
-                            True</label>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <input type="radio" id="half${i}" name="verdict${i}" value="half"><label htmlFor="half${i}">Half/Half</label>
-                    </td>
-                    <td>
-                        <input type="radio" id="hardly${i}" name="verdict${i}" value="hardly"><label htmlFor="hardly${i}">Mostly
-                            False</label>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input type="radio" id="false${i}" name="verdict${i}" value="false"><label htmlFor="false${i}">False</label>
-                    </td>
-                    <td><input type="radio" id="misleading${i}" name="verdict${i}" value="misleading"><label htmlFor="misleading${i}">Misleading</label></td>
-                </tr>
-                <tr>
-                    <td><input type="radio" id="satire${i}" name="verdict${i}" value="satire"><label htmlFor="satire${i}">Satire</label></td>
-                    <td><input type="radio" id="unk${i}" name="verdict${i}" value="unk"><label htmlFor="unk${i}">Hard to say</label>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div>
-            <h3>Claim</h3>
-            <crowd-card>
-                <div className="card">` + "${claim" + `${i}}</div>
-            </crowd-card>
-            <h3>Verdict</h3>
-            <crowd-card>
-                <div className="card">` + "${verdict" + `${i}}</div>
-            </crowd-card>
-        </div>
-        <span onClick="reset(${i});">Reset</span>
-    </div>
-
-    <div className='column' id="right${i}" style="display: none">
-        <div className="radio-box">
-            <h3>Is the verdict a good summary of the article?</h3>
-            <input type="radio" id="rate0${i}" name="rate${i}" value="1"><label htmlFor="rate0${i}">1</label>
-            <input type="radio" id="rate1${i}" name="rate${i}" value="2"><label htmlFor="rate1${i}">2</label>
-            <input type="radio" id="rate2${i}" name="rate${i}" value="3"><label htmlFor="rate2${i}">3</label>
-            <input type="radio" id="rate3${i}" name="rate${i}" value="4"><label htmlFor="rate3${i}">4</label>
-            <input type="radio" id="rate4${i}" name="rate${i}" value="5"><label htmlFor="rate4${i}">5</label>
-
-        </div>
-        <div>
-            <h3>Article</h3>
-            <crowd-card>
-                <div className="card">
-                    ` + "${text" + `${i}}
-                </div>
-            </crowd-card>
-        </div>
-    </div>
-</crowd-tab>`
-    }
 </script>
