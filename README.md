@@ -1,1 +1,3 @@
-# smaite_mturk
+# SMAITE mturk GUIs
+
+Documentation in preparation
